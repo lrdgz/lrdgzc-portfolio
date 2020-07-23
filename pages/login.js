@@ -2,7 +2,6 @@
 const Login = () => {
     return (
         <>
-
             {/* LOGIN PAGE STARTS */}
             <section className="section-title">
                 <div className="px-2">
