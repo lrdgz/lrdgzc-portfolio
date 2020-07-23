@@ -9,54 +9,36 @@ const dev = process.env.NODE_ENV !== 'production';
 const app = next({ dev });
 const handle = app.getRequestHandler();
 
+//Resolvers
+const { portfolioResolvers } = require('./graphql/resolvers');
 
-const data = {
-    portfolios: [
-        { _id: '32aaasssaa', title: 'Job in RD', company: 'Test', companyWebSite: '', location: '', jobTitle: '', description: '', startDate: '01/01/2014', endDate: '01/01/2015' },
-        { _id: '32aaasssaa', title: 'Job in RD', company: 'Test', companyWebSite: '', location: '', jobTitle: '', description: '', startDate: '01/01/2014', endDate: '01/01/2015' },
-        { _id: '32aaasssaa', title: 'Job in RD', company: 'Test', companyWebSite: '', location: '', jobTitle: '', description: '', startDate: '01/01/2014', endDate: '01/01/2015' },
-        { _id: '32aaasssaa', title: 'Job in RD', company: 'Test', companyWebSite: '', location: '', jobTitle: '', description: '', startDate: '01/01/2014', endDate: '01/01/2015' },
-        { _id: '32aaasssaa', title: 'Job in RD', company: 'Test', companyWebSite: '', location: '', jobTitle: '', description: '', startDate: '01/01/2014', endDate: '01/01/2015' },
-    ]
-}
+
+//Types
+const { portfolioTypes } = require('./graphql/types');
+
 
 app.prepare().then(() => {
     const server = express();
 
-    //Construct a schema, using GRAPHQL schema languaje 
+    //Construct a schema, using GRAPHQL schema language 
     const schema = buildSchema(`
-        type Portfolio {
-            _id: ID
-            title: String
-            company: String
-            companyWebSite: String
-            location: String
-            jobTitle: String
-            description: String
-            startDate: String
-            endDate: String
-        }
+        ${portfolioTypes}
 
         type Query {
             hello: String
-            portfolio: Portfolio
+            portfolio(id: ID): Portfolio
             portfolios: [Portfolio]
         }
+
+        type Mutation {
+            createPortfolio( portfolio: Portfolio ): Portfolio
+        }
+
     `);
 
     //The root providers a resolver fom each API endpoint
     const root = {
-        hello: () => {
-            return 'Hello World'
-        },
-
-        portfolio: () => {
-            return data.portfolios[0]
-        },
-
-        portfolios: () => {
-            return data.portfolios
-        }
+        ...portfolioResolvers
     };
 
     server.use('/graphql', graphqlHTTP({
