@@ -63,6 +63,7 @@ const Portfolios = (props) => {
 
 
 Portfolios.getInitialProps = async () => {
+    console.log('GET INITIAL PROPS PORTFOLIOS');
     const data = await apiCall();
     return { ...data };
 }
