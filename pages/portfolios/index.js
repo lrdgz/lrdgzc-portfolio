@@ -56,6 +56,48 @@ const graphCreatePortfolio = () => {
         .then(data => data.createPortfolio)
 }
 
+const graphUpdatePortfolio = (id) => {
+    const query = `
+        mutation updatePortfolio { 
+            updatePortfolio(id: "${id}" , input: { 
+                title: "bb", 
+                company: "bb", 
+                companyWebSite: "bb", 
+                location: "bb", 
+                jobTitle: "bb", 
+                description: "bb",
+                startDate: "bb",
+                endDate: "bb"
+            }){
+                _id, 
+                title, 
+                company, 
+                companyWebSite, 
+                location, 
+                jobTitle, 
+                description,
+                startDate,
+                endDate
+            }
+        }`;
+
+    return axios.post('http://localhost:3000/graphql', { query: query })
+        .then(({ data: graph }) => graph.data)
+        .then(data => data.updatePortfolio)
+}
+
+
+const graphDeletePortfolio = (id) => {
+    const query = `
+        mutation deletePortfolio { 
+            deletePortfolio(id: "${id}")
+        }`;
+
+    return axios.post('http://localhost:3000/graphql', { query: query })
+        .then(({ data: graph }) => graph.data)
+        .then(data => data.deletePortfolio)
+}
+
 
 const Portfolios = ({ data }) => {
 
@@ -66,7 +108,22 @@ const Portfolios = ({ data }) => {
         const newPortfolios = [...portfolios, newPortfolio];
         setPortfolios(newPortfolios);
     }
-    
+
+    const updatePortfolio = async (id) => {
+        const updatePortfolio = await graphUpdatePortfolio(id);
+        const index = portfolios.findIndex(p => p._id === id);
+        const newPortfolios = portfolios.slice();
+        newPortfolios[index] = updatePortfolio;
+        setPortfolios(newPortfolios);
+    }
+
+    const deletePortfolio = async (id) => {
+        const deletedId = await graphDeletePortfolio(id);
+        const index = portfolios.findIndex(p => p._id === deletedId);
+        const newPortfolios = portfolios.slice();
+        newPortfolios.splice(index, 1);
+        setPortfolios(newPortfolios);
+    }
 
     return (
         <>
@@ -93,7 +150,9 @@ const Portfolios = ({ data }) => {
                                     <a className="card-link">
                                         <PortfolioCard portfolio={portfolio} /> 
                                     </a>
-                                </Link> 
+                                </Link>
+                                <button onClick={() => updatePortfolio(portfolio._id)} className="btn btn-warning">Update Portfolio</button>
+                                <button onClick={() => deletePortfolio(portfolio._id)} className="btn btn-danger">Delete Portfolio</button>
                             </div>
                         )
                    }
