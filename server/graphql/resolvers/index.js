@@ -24,11 +24,22 @@ exports.portfolioQueries = {
 };
 
 exports.portfolioMutations = {
+
     createPortfolio: (root, { input }) => {
         const _id = require('crypto').randomBytes(10).toString('hex');
         const newPortfolio = {...input};
         newPortfolio._id = _id;
         data.portfolios.push(newPortfolio);
         return newPortfolio;
-    }
+    },
+
+    updatePortfolio: (root, { id, input }) => {
+        const index = data.portfolios.findIndex(p => p._id === id);
+        const oldPortfolio = data.portfolios[index];
+        const newPortfolio = { ...oldPortfolio, ...input };
+        newPortfolio._id = _id;
+        data.portfolios[index] = newPortfolio;
+        return newPortfolio;
+    },
+    
 };

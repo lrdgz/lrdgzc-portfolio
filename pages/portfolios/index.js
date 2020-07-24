@@ -1,6 +1,8 @@
+import { useState } from 'react';
 import axios from 'axios';
 import PortfolioCard from '@/components/portfolio/PortfolioCard';
 import Link from 'next/link';
+
 
 const fetchPortfolios = () => {
     const query = `
@@ -24,7 +26,47 @@ const fetchPortfolios = () => {
 }
 
 
-const Portfolios = ({ portfolios }) => {
+const graphCreatePortfolio = () => {
+    const query = `
+        mutation createPortfolio { 
+            createPortfolio(input: { 
+                title: "aa", 
+                company: "aa", 
+                companyWebSite: "aa", 
+                location: "aa", 
+                jobTitle: "aa", 
+                description: "aa",
+                startDate: "aa",
+                endDate: "aa"
+            }){
+                _id, 
+                title, 
+                company, 
+                companyWebSite, 
+                location, 
+                jobTitle, 
+                description,
+                startDate,
+                endDate
+            }
+        }`;
+
+    return axios.post('http://localhost:3000/graphql', { query: query })
+        .then(({ data: graph }) => graph.data)
+        .then(data => data.createPortfolio)
+}
+
+
+const Portfolios = ({ data }) => {
+
+    const [ portfolios, setPortfolios ] = useState(data.portfolios); 
+
+    const createPortfolio = async () => {
+        const newPortfolio = await graphCreatePortfolio();
+        const newPortfolios = [...portfolios, newPortfolio];
+        setPortfolios(newPortfolios);
+    }
+    
 
     return (
         <>
@@ -34,6 +76,10 @@ const Portfolios = ({ portfolios }) => {
                         <h1>Portfolios</h1>
                     </div>
                 </div>
+                <button 
+                    onClick={createPortfolio}
+                    className="btn btn-primary"
+                >Create Portfolio</button>
             </section>
 
             <section className="pb-5">
@@ -61,7 +107,7 @@ const Portfolios = ({ portfolios }) => {
 Portfolios.getInitialProps = async () => {
     console.log('GET INITIAL PROPS PORTFOLIOS');
     const portfolios = await fetchPortfolios();
-    return { portfolios };
+    return { data: { portfolios } };
 }
 
 export default Portfolios;
