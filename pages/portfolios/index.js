@@ -13,7 +13,6 @@ import PortfolioCard from '@/components/portfolio/PortfolioCard';
 import Link from 'next/link';
 
 const Portfolios = () => {
-    
     const { data } =  useGetPortfolios();
     const [ updatePortfolio ] = useUpdatePortfolio();
     const [ deletePortfolio ] = useDeletePortfolio();
