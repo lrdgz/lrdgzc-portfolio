@@ -9,7 +9,8 @@ export default withApollo (
             uri: 'http://localhost:3000/graphql',
             cache: new InMemoryCache().restore(initialState || {})
         });
-    }, {
+    }, 
+    {
         render: ({Page, props}) => {
             return (
                 <ApolloProvider client={props.apollo}>
