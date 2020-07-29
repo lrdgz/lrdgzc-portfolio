@@ -16,6 +16,10 @@ const {
     userTypes
 } = require('./types');
 
+
+const { buildAuthContext } = require('./context');
+
+
 //Grapql Models
 const Portfolio = require('./models/Portfolio');
 const User = require('./models/User');
@@ -39,8 +43,8 @@ exports.createApolloServer = () => {
             deletePortfolio(id: ID): ID
 
             signUp(input: SignUpInput): String
-            signIn: String
-            signOut: String
+            signIn(input: SignInInput): User
+            signOut: Boolean
 
         }
     `;
@@ -59,7 +63,8 @@ exports.createApolloServer = () => {
     const apolloServer = new ApolloServer({
         typeDefs, 
         resolvers,
-        context: () => ({ 
+        context: ({ req }) => ({ 
+            ...buildAuthContext(req),
             models: {
                 Portfolio: new Portfolio(mongoose.model('Portfolio')),
                 User: new User(mongoose.model('User')),

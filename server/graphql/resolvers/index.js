@@ -27,7 +27,6 @@ exports.portfolioMutations = {
 
 };
 
-
 exports.userMutations = {
 
     signUp: async (root, { input }, ctx) => {
@@ -35,12 +34,12 @@ exports.userMutations = {
         return registerUser._id;
     },
 
-    signIn: async (root, args, ctx) => {
-        return await ctx.models.User.signIn();
+    signIn: async (root, { input }, ctx) => {
+        return await ctx.models.User.signIn(input, ctx);
     },
 
     signOut: async (root, args, ctx) => {
-        return await ctx.models.User.signOut();
+        return await ctx.models.User.signOut(ctx);
     },
 
 };

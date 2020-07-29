@@ -12,13 +12,28 @@ class User {
         return await this.Model.create(signUpData);
     }
 
-
-    async signIn(){
-        return 'Signin In...';
+    async signIn(signInData, ctx){
+        try {
+            const user = await ctx.authenticate(signInData);
+            return user;
+        } catch (error) {
+            return error;
+        }
     }
 
-    async signOut(){
-        return 'Signin Out...';
+    signOut(ctx){
+        try { 
+            console.log('BEFORE LOGOUT ---------------------');
+            console.log('Is Authenticated', ctx.isAuthenticated());
+            console.log('User', ctx.getUser());
+            ctx.logout();
+            console.log('AFTER LOGOUT ---------------------');
+            console.log('Is Authenticated', ctx.isAuthenticated());
+            console.log('User', ctx.getUser());
+            return true;
+        } catch (e) {
+            return false;
+        }
     }
 
 }
