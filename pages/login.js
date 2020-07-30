@@ -1,30 +1,33 @@
+import withApollo from '@/hoc/withApollo';
+
+import { useSignIn } from '@/apollo/actions';
+
+import LoginForm from "@/components/forms/LoginForm";
+import Redirect from '@/components/shared/Redirect';
+
 
 const Login = () => {
+
+    const [signIn, { data, loading, error }] = useSignIn();
+
+    const errorMessage = error => {
+        return (error.graphQLErrors && error.graphQLErrors[0].message) || 'Oooooooooops something went wrong...';
+    };
+
     return (
         <>
             <div className="bwm-form mt-5">
                 <div className="row">
                     <div className="col-md-5 mx-auto">
                         <h1 className="page-title">Login</h1>
-                        <form>
-                            <div className="form-group">
-                                <label htmlFor="email">Email</label>
-                                <input
-                                    type="email"
-                                    className="form-control"
-                                    id="email" />
-                            </div>
-                            <div className="form-group">
-                                <label htmlFor="password">Password</label>
-                                <input
-                                    type="password"
-                                    className="form-control"
-                                    id="password" />
-                            </div>
-                            <button
-                                type="submit"
-                                className="btn btn-main bg-blue py-2 ttu">Submit</button>
-                        </form>
+                        <LoginForm 
+                            loading={loading}
+                            onSubmit={(signInData) => {
+                                const {email, password} = signInData;
+                                signIn({variables: {email, password}});
+                            }}/>
+                        { data && data.signIn && <Redirect to="/" /> }
+                        { error && <div className="alert alert-danger">{errorMessage(error)}</div> }
                     </div>
                 </div>
             </div>
@@ -32,4 +35,4 @@ const Login = () => {
     );
 };
 
-export default Login;
+export default withApollo(Login);

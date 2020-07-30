@@ -41,6 +41,6 @@ exports.userTypes = `
 
     input SignInInput {
         email: String!,
-        password: String!,
+        password: String!
     }
 `;

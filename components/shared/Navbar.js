@@ -1,5 +1,10 @@
+import { useState, useEffect } from 'react';
+
 import { Navbar, Nav } from 'react-bootstrap';
 import Link from 'next/link';
+
+import withApollo from '@/hoc/withApollo';
+import { useLazyGetUser } from '@/apollo/actions';
 
 const AppLink = ({ children, className, href }) =>
     <Link href={href}>
@@ -7,6 +12,21 @@ const AppLink = ({ children, className, href }) =>
     </Link>
 
 const AppNavbar = () => {
+
+    const [ user, setUser ] = useState(null);
+    const [ hasResponse, setHasResponse ] = useState(false);
+    const [ getUser, { data, error }] = useLazyGetUser();
+
+    useEffect(() => {
+        getUser();
+    }, []);
+
+    if(data) {
+        if(data.user && !user) { setUser(data.user); }
+        if(!data.user && user) { setUser(null); }
+        if(!hasResponse) { setHasResponse(true); }
+    }
+
     return (
         <>
             {/* NAVBAR START */}
@@ -18,17 +38,32 @@ const AppNavbar = () => {
                         <Nav className="mr-auto">
                             <AppLink href="/portfolios" className="nav-link mr-3">Portfolio</AppLink>
                             <AppLink href="/forum/categories" className="nav-link mr-3">Forum</AppLink>
-                            <AppLink href="/cv" className="nav-link mr-3">Forum</AppLink>
+                            <AppLink href="/cv" className="nav-link mr-3">Cv</AppLink>
                         </Nav>
-                        <Nav>
-                            <AppLink href="/login" className="nav-link mr-3">
-                                Sign In
-                            </AppLink>
-                            <AppLink href="/register" className="mr-3 btn btn-success bg-green-2 bright">
-                                Sign Up
-                            </AppLink>
-
-                        </Nav>
+                        { hasResponse && 
+                            <Nav>
+                                { 
+                                    user && 
+                                    <>
+                                       <span className="nav-link mr-4"> Welcome {user.username}</span>
+                                       <AppLink href="/logout" className="nav-link btn btn-danger">
+                                            Sign Out
+                                        </AppLink>
+                                    </>
+                                }
+                                { 
+                                    (error || !user) &&
+                                    <>
+                                        <AppLink href="/login" className="nav-link mr-3">
+                                            Sign In
+                                        </AppLink>
+                                        <AppLink href="/register" className="mr-3 btn btn-success bg-green-2 bright">
+                                            Sign Up
+                                        </AppLink>
+                                    </>
+                                }
+                            </Nav>
+                        }
                     </Navbar.Collapse>
                 </Navbar>
             </div >
@@ -37,4 +72,4 @@ const AppNavbar = () => {
     );
 };
 
-export default AppNavbar;
+export default withApollo(AppNavbar);
