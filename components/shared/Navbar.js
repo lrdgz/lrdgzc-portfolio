@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 
-import { Navbar, Nav } from 'react-bootstrap';
+import { Navbar, Nav, NavDropdown } from 'react-bootstrap';
 import Link from 'next/link';
 
 import withApollo from '@/hoc/withApollo';
@@ -45,7 +45,20 @@ const AppNavbar = () => {
                                 { 
                                     user && 
                                     <>
-                                       <span className="nav-link mr-4"> Welcome {user.username}</span>
+                                       <span className="nav-link mr-2  font-weight-bold"> Welcome {user.username}</span>
+                                       <NavDropdown className="mr-2" title="Manage">
+                                            {
+                                                (user.role === 'admin' || user.role === 'developer') &&
+                                                <AppLink href="/portfolios/new" className="dropdown-item">
+                                                    Create Portfolio
+                                                </AppLink>
+                                            }
+                                            <NavDropdown.Item href="#action/3.1">Action</NavDropdown.Item>
+                                            <NavDropdown.Item href="#action/3.2">Another action</NavDropdown.Item>
+                                            <NavDropdown.Item href="#action/3.3">Something</NavDropdown.Item>
+                                            <NavDropdown.Divider />
+                                            <NavDropdown.Item href="#action/3.4">Separated link</NavDropdown.Item>
+                                        </NavDropdown>
                                        <AppLink href="/logout" className="nav-link btn btn-danger">
                                             Sign Out
                                         </AppLink>
