@@ -1,7 +1,7 @@
 import withApollo from '@/hoc/withApollo';
 import withAuth from '@/hoc/withAuth';
 
-const Secret = ({displayMessage}) => {
+const Secret = () => {
 
 
     return (
@@ -11,7 +11,6 @@ const Secret = ({displayMessage}) => {
                     <div className="col-md-5 mx-auto">
                         <h1 className="page-title">Secret</h1>
                         <p>Secret Page, Only Autheticated users allowed!</p>
-                        {displayMessage()}
                     </div>
                 </div>
             </div>
@@ -19,4 +18,4 @@ const Secret = ({displayMessage}) => {
     );
 };
 
-export default withApollo(withAuth(Secret));
+export default withApollo(withAuth(Secret, 'admin'));
